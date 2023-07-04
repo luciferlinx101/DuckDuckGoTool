@@ -12,4 +12,4 @@ class DuckDuckGoSearchTestCase(unittest.TestCase):
     
     def test_tool_args_schema(self):
         self.assertEqual(self.tool.args_schema, DuckDuckGoSearchSchema)
-    
+

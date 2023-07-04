@@ -54,35 +54,34 @@ class DuckDuckGoSearchTool(BaseTool):
         attempts = 0
 
         while attempts < DUCKDUCKGO_MAX_ATTEMPTS:
-            if not query:
+            if not query:                                                                   #checking if string is empty, if it is empty-> convert array to JSON object and return it;
                 return json.dumps(search_results)
 
-            results = DDGS().text(query)
-            print("*********RAW DUCKDUCKGO SEARCH RESULT BEFORE SLICING",results)
-            search_results = list(islice(results, 10))
-            print("*********RAW DUCKDUCKGO SEARCH RESULT",search_results)
-            if search_results:
+            results = DDGS().text(query)                                                    #text() method from DDGS takes in query (String) as input and returns the results 
+            search_results = list(islice(results, 10))                                      #gets first 10 results from results and stores them in search_results
+            if search_results:                                                              #if search result is populated,break as there is no need to attempt the search again
                 break
 
             time.sleep(1)
             attempts += 1
 
-        links=[]
-        info=[]
-        snippets=[]
-        for result in search_results:
-            snippets.append(result["title"])
+        links=[]                                                                            #array for storing all the links generated
+        info=[]                                                                             #array for storing all the information generated
+        snippets=[]                                                                         #array for storing all the snippets/titles generated
+
+        for result in search_results:                                                       #populating the 3 arrays,Each item of the search_result array is an object with keys->"title","href","body"
+            snippets.append(result["title"])  
             links.append(result["href"])
             info.append(result["body"])
 
-        webpages=[]
+        webpages=[]                                                                         #webpages array for storing the contents extracted from the links
         
         if links:
-            for i in range(0, 3):
+            for i in range(0, 3):                                                           #using first 3 links
                 time.sleep(3)
-                content = WebpageExtractor().extract_with_bs4(links[i])
-                max_length = len(' '.join(content.split(" ")[:500]))
-                content = content[:max_length]
+                content = WebpageExtractor().extract_with_bs4(links[i])                     #takes in the link and returns content extracted from Webpage extractor
+                max_length = len(' '.join(content.split(" ")[:500]))    
+                content = content[:max_length]                                              #formating the content
                 attempts = 0
                 while content == "" and attempts < 2:
                     attempts += 1
@@ -90,7 +89,7 @@ class DuckDuckGoSearchTool(BaseTool):
                     content = content[:max_length]
                 webpages.append(content)
 
-        results=[]
+        results=[]                                                                          #array to store objects with keys :{"title":snippet , "body":webpage content, "links":link URL}
         i = 0
         for webpage in webpages:
             results.append({"title": snippets[i], "body": webpage, "links": links[i]})
@@ -98,11 +97,10 @@ class DuckDuckGoSearchTool(BaseTool):
             if TokenCounter.count_text_tokens(json.dumps(results)) > 3000:
                 break       
 
-        summary = self.summarise_result(query, results)
+        summary = self.summarise_result(query, results)                                     #summarize the content gathered using the function
         links = [result["links"] for result in results if len(result["links"]) > 0]
         if len(links) > 0:
             return summary + "\n\nLinks:\n" + "\n".join("- " + link for link in links[:3])
-        print("*********FINAL DUCKDUCKGO SEARCH SUMMARY",summary)
         return summary
 
 
