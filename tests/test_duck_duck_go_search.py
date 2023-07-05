@@ -1,6 +1,6 @@
 import unittest
 
-from duck_duck_go_search import DuckDuckGoSearchSchema, DuckDuckGoSearchTool
+from tools.duck_duck_go_search import DuckDuckGoSearchSchema, DuckDuckGoSearchTool
 
 
 class DuckDuckGoSearchTestCase(unittest.TestCase):

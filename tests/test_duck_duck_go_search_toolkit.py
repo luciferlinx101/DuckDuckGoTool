@@ -1,6 +1,6 @@
 import unittest
 
-from duck_duck_go_search_toolkit import DuckDuckGoToolkit
+from tools.duck_duck_go_search_toolkit import DuckDuckGoToolkit
 
 
 class DuckDuckGoSearchToolkitTestCase(unittest.TestCase):
@@ -14,7 +14,7 @@ class DuckDuckGoSearchToolkitTestCase(unittest.TestCase):
         Returns:
             None
         """
-        self.toolkit = SearxSearchToolkit()
+        self.toolkit = DuckDuckGoToolkit()
 
     def test_get_tools(self):
         """
@@ -28,7 +28,7 @@ class DuckDuckGoSearchToolkitTestCase(unittest.TestCase):
 
         tools = self.toolkit.get_tools()
         self.assertEqual(1, len(tools))
-        self.assertIsInstance(tools[0], SearxSearchTool)
+        self.assertIsInstance(tools[0], DuckDuckGoToolkit)
 
     def test_get_env_keys(self):
         """
